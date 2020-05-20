@@ -82,6 +82,8 @@ void BandPass1::setup (double sampleRate,
   double cs = cos (w0);
   double sn = sin (w0);
   double AL = sn / ( 2 * bandWidth );
+  // There was a bug in BandPass2::setup. If you run into any issue do check if bandwidth is
+  // interpreted correctly, maybe we have to change this like for BandPass2 and BandStop
   double b0 = bandWidth * AL;// sn / 2;
   double b1 =  0;
   double b2 = -bandWidth * AL;//-sn / 2;
@@ -98,7 +100,9 @@ void BandPass2::setup (double sampleRate,
   double w0 = 2 * doublePi * centerFrequency / sampleRate;
   double cs = cos (w0);
   double sn = sin (w0);
-  double AL = sn / ( 2 * bandWidth );
+  // double AL = sn / ( 2 * bandWidth ); ->this was the original calculation, but it is
+  // misleading since bandWidth is interpreted as quality
+  double AL = sn * sinh( doubleLn2/2 * bandWidth * w0/sn );
   double b0 =  AL;
   double b1 =  0;
   double b2 = -AL;
@@ -115,7 +119,9 @@ void BandStop::setup (double sampleRate,
   double w0 = 2 * doublePi * centerFrequency / sampleRate;
   double cs = cos (w0);
   double sn = sin (w0);
-  double AL = sn / ( 2 * bandWidth );
+  // double AL = sn / ( 2 * bandWidth ); ->this was the original calculation, but it is
+  // misleading since bandWidth is interpreted as quality
+  double AL = sn * sinh( doubleLn2/2 * bandWidth * w0/sn );
   double b0 =  1;
   double b1 = -2 * cs;
   double b2 =  1;
