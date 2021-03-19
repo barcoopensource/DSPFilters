@@ -109,6 +109,15 @@ struct HighShelf : BiquadBase
               double shelfSlope);
 };
 
+// HighShelf2: Anymix addition (based on animix svn r11957 "anymix: using smoothed dsp filter for DDEQ" by MARDO)
+struct HighShelf2 : BiquadBase
+{
+  void setup (double sampleRate,
+              double cutoffFrequency,
+              double gainLin,
+              double Q);
+};
+
 struct BandShelf : BiquadBase
 {
   void setup (double sampleRate,

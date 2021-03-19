@@ -171,6 +171,28 @@ void HighShelf::setup (double sampleRate,
   setCoefficients (a0, a1, a2, b0, b1, b2);
 }
 
+// HighShelf2: Anymix addition (based on animix svn r11957 "anymix: using smoothed dsp filter for DDEQ" by MARDO)
+void HighShelf2::setup (double sampleRate,
+                        double cutoffFrequency,
+                        double gainLin,
+                        double Q)
+{
+  const double A = std::max(0.0, gainLin);
+  const double aminus1 = A - 1.0;
+  const double aplus1 = A + 1.0;
+  const double omega = (doublePi * 2.0 * std::max(cutoffFrequency, 2.0)) / sampleRate;
+  const double coso = std::cos(omega);
+  const double beta = std::sin(omega) * std::sqrt(A) / Q;
+  const double aminus1TimesCoso = aminus1 * coso;
+
+  setCoefficients (aplus1 - aminus1TimesCoso + beta,
+                   2.0 * (aminus1 - aplus1 * coso),
+                   aplus1 - aminus1TimesCoso - beta,
+                   A * (aplus1 + aminus1TimesCoso + beta),
+                   A * -2.0 * (aminus1 + aplus1 * coso),
+                   A * (aplus1 + aminus1TimesCoso - beta));
+}
+
 void BandShelf::setup (double sampleRate,
                        double centerFrequency,
                        double gainDb,
